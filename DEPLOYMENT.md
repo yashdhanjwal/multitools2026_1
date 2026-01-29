@@ -1,6 +1,6 @@
-# Deployment Guide for Hostingial.com
+# Deployment Guide for Hostingial (cPanel)
 
-This guide explains how to deploy "Free Online Tools by Yash Dhanjwal" to Hostingial.com.
+This guide explains how to deploy "Free Online Tools by Yash Dhanjwal" to Hostingial using the cPanel Node.js Selector.
 
 ## 1. Prepare the Frontend
 Run the build command in the `frontend` directory:
@@ -9,31 +9,43 @@ npm run build
 ```
 The output will be in the `frontend/dist` directory.
 
-## 2. Prepare the Backend
-The backend is a standard Node.js Express application located in the `backend` directory.
+## 2. Upload Files to cPanel
+For the best results on cPanel, we recommend the following structure:
+1. Create a folder named `backend` (or similar) in your home directory or `public_html`.
+2. Upload all contents of the `backend` directory into this folder.
+3. Upload the `dist` folder (from `frontend/dist`) into that same `backend` folder.
+   - Your structure should look like:
+     ```
+     backend/
+       dist/ (contains index.html, assets, etc.)
+       node_modules/
+       server.js
+       package.json
+     ```
 
-## 3. Hostingial Deployment Steps
+## 3. Setup Node.js in cPanel
+1. Log in to cPanel and open **Setup Node.js App**.
+2. Click **Create Application**.
+3. **Node.js version**: Select 18.x or higher (22.x is also fine).
+4. **Application mode**: Production.
+5. **Application root**: The path to your `backend` folder (e.g., `public_html/backend`).
+6. **Application URL**: Select your domain/subdomain.
+7. **Application startup file**: `server.js`.
+8. Click **Create**.
 
-### Option A: Static + API (Recommended)
-1. **Frontend**: Upload the contents of `frontend/dist` to your public HTML folder or use the Static Site hosting feature on Hostingial.
-2. **Backend**:
-   - Create a new "Node.js Application" in your Hostingial control panel.
-   - Upload the `backend` folder contents (excluding `node_modules` and `uploads`).
-   - Set the startup file to `server.js`.
-   - Run `npm install` via the Hostingial console/terminal.
-   - Note the API URL (e.g., `https://api.ft1.yashdhanjwal.com`).
+## 4. Install Dependencies
+1. Once the app is created, click the **Run NPM Install** button.
+2. If you see an error about "Return code None", don't worry yet. This often happens during the initial check.
+3. Refresh the page and check if the application is "Started".
 
-### Option B: Single Server (Unified)
-1. Ensure the `frontend` and `backend` folders are uploaded as siblings in your server directory.
-2. Run `npm run build` in the `frontend` folder.
-3. The `backend/server.js` is already configured to detect and serve the `frontend/dist` build automatically.
-4. Upload the folders to your Node.js application slot on Hostingial.
+## 5. Troubleshooting "Return code None"
+If the application fails to start:
+- **Port Conflict**: The application is configured to use `process.env.PORT`. cPanel/Passenger manages this automatically.
+- **Missing Dist**: Ensure the `dist` folder is correctly uploaded inside your application root.
+- **Node.js Version**: If 22.x fails, try 18.x or 20.x as they are more mature in some hosting environments.
+- **Permissions**: Ensure the `uploads` folder can be created or create it manually with 755 permissions.
 
-## 4. Environment Configuration
-Ensure the following environment variables are set in your Hostingial dashboard:
-- `PORT`: Usually provided by the host (default 5000).
+## 6. Environment Variables
+In the Node.js App setup page, you can add:
 - `NODE_ENV`: `production`
-
-## 5. Security & Privacy
-- The application includes an automatic cleanup job that deletes uploaded files every 30 minutes.
-- Ensure the `uploads/` directory has write permissions on the server.
+- `PORT`: (Usually not needed as cPanel provides it, but you can set to 3000 if required).
