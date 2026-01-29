@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen;
+    margin: 0;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
