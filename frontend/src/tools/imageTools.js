@@ -1,5 +1,6 @@
 import * as pdfjsLib from 'pdfjs-dist';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.mjs?url';
+import imageCompression from 'browser-image-compression';
 
 // Setting worker path is required for pdfjs
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
@@ -27,8 +28,6 @@ export const pdfToImages = async (file, format = 'jpeg') => {
   }
   return images;
 };
-
-import imageCompression from 'browser-image-compression';
 
 export const compressImage = async (file, options = { maxSizeMB: 1, maxWidthOrHeight: 1920 }) => {
   return await imageCompression(file, options);
